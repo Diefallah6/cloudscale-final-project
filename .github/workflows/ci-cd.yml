@@ -14,7 +14,7 @@ ACR_LOGIN_SERVER: acrdiefallah4808final26.azurecr.io
 AKS_RESOURCE_GROUP: rg-diefallah-cloudscale-final
 AKS_CLUSTER_NAME: aks-diefallah-final
 IMAGE_NAME: cloudscale-web
-IMAGE_TAG: v1
+IMAGE_TAG: ${{ github.sha }}
 
 jobs:
 build-and-test:
@@ -86,15 +86,17 @@ steps:
     with:
       creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-  - name: Set AKS credentials
+  - name: Get AKS credentials
     run: |
       az aks get-credentials \
         --resource-group $AKS_RESOURCE_GROUP \
         --name $AKS_CLUSTER_NAME \
+        --admin \
         --overwrite-existing
 
   - name: Deploy application to AKS
     run: |
       kubectl apply -f k8s/deployment.yaml
       kubectl apply -f k8s/service.yaml
+      kubectl set image deployment/cloudscale-web cloudscale-web=$ACR_LOGIN_SERVER/$IMAGE_NAME:$IMAGE_TAG
       kubectl rollout status deployment/cloudscale-web
