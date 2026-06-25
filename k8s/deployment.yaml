@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloudscale-web
+  labels:
+    app: cloudscale-web
+spec:
+  replicas: 3
+
+  selector:
+    matchLabels:
+      app: cloudscale-web
+
+  template:
+    metadata:
+      labels:
+        app: cloudscale-web
+
+    spec:
+      containers:
+        - name: cloudscale-web
+          image: acrdiefallah4808final26.azurecr.io/cloudscale-web:v1
+          imagePullPolicy: Always
+
+          ports:
+            - containerPort: 3000
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
