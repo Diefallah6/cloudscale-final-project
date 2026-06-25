@@ -1,0 +1,8 @@
+app/node_modules
+.git
+.github
+terraform/.terraform
+terraform/*.tfstate
+terraform/*.tfstate.*
+.vscode
+README.md
